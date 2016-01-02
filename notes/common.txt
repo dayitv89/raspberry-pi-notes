@@ -1,0 +1,11 @@
+# ip address check
+ifconfig
+
+# update system
+sudo apt-get update
+sudo apt-get upgrade
+
+sudo init 0 // halt / shutdown
+sudo init 1 // logout : control + D
+sudo init 6 // restart
+

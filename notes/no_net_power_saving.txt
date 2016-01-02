@@ -1,0 +1,21 @@
+ref: https://raspberrypi.stackexchange.com/a/47585
+
+QUESTION ::::::
+WLAN connected, but no internet access
+
+ANSWER :::::
+
+If what @ott said doesn't work, Try restarting your router and resetting your Internet modem. Just because you're connected to the network doesn't mean you're connected to the Internet. You should also re-download noobs, reinstall it, then try to connect to the Internet. I had a similar issue as you did, and a fresh installation of noobs fixed it for me. Using Ethernet connection, I would also try sudo apt-get update in the terminal. When that completes, use sudo apt-get dist-upgrade to ensure you've got the current updates. This could help the wireless issue you're having.
+
+Edit: I ran by this just today. Give this a try. It's straight from adafruit.com.
+
+If you find your module 'drops out' from time to time, you can fix it fairly easily with a command line fix (thanks perseus286!)
+
+Create and edit a new file in /etc/modprobe.d/8192cu.conf
+
+sudo nano /etc/modprobe.d/8192cu.conf
+and paste the following in
+
+# Disable power saving
+options 8192cu rtw_power_mgnt=0 rtw_enusbss=1 rtw_ips_mode=1 
+Then reboot with sudo reboot

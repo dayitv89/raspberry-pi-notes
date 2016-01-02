@@ -1,0 +1,4 @@
+user: pi
+password: gdspi123
+
+ssh as $ ssh pi@_IP_

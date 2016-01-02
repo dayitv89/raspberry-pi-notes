@@ -1,0 +1,3 @@
+start GUI $ startx
+close GUI $ control + alt + F1; then control + c
+

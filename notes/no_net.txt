@@ -1,0 +1,67 @@
+ref: https://raspberrypi.stackexchange.com/a/14107
+
+QUESTION:::::
+connect-network-is-unreachable-on-a-working-connected-wlan0-interface
+
+details:
+
+I finally managed to make wlan0 (an Edimax EW-7811Un USB WiFi dongle) connect to my router, but after an apt-get update I discovered that the Raspberry can't see outside the local network. My Raspberry is running on the latest (as of writing this) Raspbian image.
+
+wlan0 is connected to my router and has been given an IP address
+I can ping my router, my printer, and other machines inside the local network, but I can't ping anything in the outside net (also loopback ping on localhost says "host unreachable", but I'd say that it is NAT cancelling 127.0.0.1 requests)
+I can successfully connect through eth0, but I need to connect through wlan0.
+ifconfig output:
+
+pi@MinoPi ~ $ ifconfig wlan0
+wlan0     Link encap:Ethernet  HWaddr *macaddresshere*
+      inet addr:192.168.1.9  Bcast:192.168.1.255  Mask:255.255.255.0
+      UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+      RX packets:552 errors:0 dropped:6 overruns:0 frame:0
+      TX packets:289 errors:0 dropped:0 overruns:0 carrier:0
+      collisions:0 txqueuelen:1000
+      RX bytes:375003 (366.2 KiB)  TX bytes:318051 (310.5 KiB)
+iwconfig output:
+
+pi@MinoPi ~ $ iwconfig wlan0
+wlan0     IEEE 802.11bg  ESSID:"Sanctuary"  Nickname:"<WIFI@REALTEK>"
+      Mode:Managed  Frequency:2.437 GHz  Access Point: *macaddresshere*
+      Bit Rate:54 Mb/s   Sensitivity:0/0
+      Retry:off   RTS thr:off   Fragment thr:off
+      Power Management:off
+      Link Quality=100/100  Signal level=100/100  Noise level=0/100
+      Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+      Tx excessive retries:0  Invalid misc:0   Missed beacon:0
+/etc/network/interfaces file:
+
+auto lo
+
+iface lo inet loopback
+iface eth0 inet dhcp
+
+iface wlan0 inet static
+    address 192.168.1.9
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+    wpa-ssid "Sanctuary"
+    wpa-psk "somePasswordHere"
+
+
+
+
+
+ANSWER:::::
+
+Problem solved! It seems that even though I added the gateway information into the interfaces file, wlan0 didn't really have a default gateway.
+
+When I ran
+
+sudo route -n
+it yielded
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.1.0     0.0.0.0         255.255.255.0   U     0      0        0 wlan0
+There it is - no Gateway IP. I typed this:
+
+ sudo route add default gw 192.168.1.1
+(where 192.168.1.1 is an IP address of my router, which is connected to the outside net)

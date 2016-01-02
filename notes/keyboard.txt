@@ -1,0 +1,9 @@
+if keyboard @ or some keyboard key is not behaving like they should: 
+
+ref: https://raspberrypi.stackexchange.com/a/1044
+
+$ sudo nano /etc/default/keyboard
+
+find `XKBLAYOUT="gb"` and replace to `XKBLAYOUT="us"`
+
+restart the raspberrypi as $ sudo init 0
